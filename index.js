@@ -1,3 +1,5 @@
+// mern-backend/index.js
+
 require('dotenv').config(); // .env se data load karein
 const express = require('express');
 const mongoose = require('mongoose');
@@ -11,26 +13,26 @@ const MONGODB_URI = process.env.MONGODB_URI;
 app.use(cors()); 
 app.use(express.json()); // JSON data ko read karne ke liye
 
-// --- **Vercel Health Check Route** ---
-// Jab Vercel ya koi aur service '/' par check karegi, to yeh message wapas aayega.
+// --- Vercel Health Check Route ---
+// Yeh root route Vercel ke deployment health check ko pass karega.
 app.get('/', (req, res) => {
-    res.send('MERN Server is running and healthy!');
+    res.send('MERN Backend API is running!');
 });
 
-// --- 1. MongoDB Atlas se connect karein ---
+// --- MongoDB Atlas Connection ---
 mongoose.connect(MONGODB_URI)
   .then(() => console.log('MongoDB Atlas se Connected!'))
   .catch(err => console.error('MongoDB Connection Error:', err));
 
-// --- 2. Schema (Data structure) define karein ---
+// --- Mongoose Schema (Data structure) ---
 const itemSchema = new mongoose.Schema({
   text: { type: String, required: true }
 });
 const Item = mongoose.model('Item', itemSchema);
 
-// --- 3. API Endpoints (Routes) ---
+// --- API Endpoints (Routes) ---
 
-// Data Save (POST Request) karne ke liye
+// 1. Data Save (POST Request)
 app.post('/api/items', async (req, res) => {
   try {
     const newItem = new Item({
@@ -43,7 +45,7 @@ app.post('/api/items', async (req, res) => {
   }
 });
 
-// Sabhi Data Fetch (GET Request) karne ke liye
+// 2. Sabhi Data Fetch (GET Request)
 app.get('/api/items', async (req, res) => {
   try {
     const items = await Item.find();
@@ -54,4 +56,5 @@ app.get('/api/items', async (req, res) => {
 });
 
 // Server ko start karein
+// Note: Vercel serverless function use karta hai, lekin yeh line local testing ke liye zaroori hai.
 app.listen(PORT, () => console.log(`Server Port ${PORT} par chal raha hai`));
