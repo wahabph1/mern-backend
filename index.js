@@ -1,5 +1,3 @@
-// server/index.js
-
 require('dotenv').config(); // .env se data load karein
 const express = require('express');
 const mongoose = require('mongoose');
@@ -12,6 +10,12 @@ const MONGODB_URI = process.env.MONGODB_URI;
 // Middleware: Front-end se aane wale data ko handle karna
 app.use(cors()); 
 app.use(express.json()); // JSON data ko read karne ke liye
+
+// --- **Vercel Health Check Route** ---
+// Jab Vercel ya koi aur service '/' par check karegi, to yeh message wapas aayega.
+app.get('/', (req, res) => {
+    res.send('MERN Server is running and healthy!');
+});
 
 // --- 1. MongoDB Atlas se connect karein ---
 mongoose.connect(MONGODB_URI)
